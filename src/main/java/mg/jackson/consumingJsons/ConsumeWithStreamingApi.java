@@ -19,9 +19,9 @@ public class ConsumeWithStreamingApi {
         try (final JsonParser parser = factory.createParser(BANK_LOAN_FILE.toFile())) {
             JsonToken token;
 
-            while ((token = parser.nextToken()) != null ) {
+            while ((token = parser.nextToken()) != null) {
                 if (token.isScalarValue()) {
-                    String currentName = parser.getCurrentName();
+                    String currentName = parser.currentName();
                     if (currentName != null) {
                         String text = parser.getText();
                         System.out.println(currentName + ": " + text);

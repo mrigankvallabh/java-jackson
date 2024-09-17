@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import mg.jackson.model.LoanApplication;
 
-
 @Warmup(iterations = 5, time = 1)
 @Measurement(iterations = 5, time = 1)
 @Fork(2)
@@ -32,8 +31,7 @@ public class JsonBenchmark {
     JsonFactory jsonFactory;
 
     @Setup
-    public void prepare() throws IOException
-    {
+    public void prepare() throws IOException {
 
         bankLoanData = new String(Files.readAllBytes((Path.of("src/main/resources/bank_loan.json"))));
         objectMapper = new ObjectMapper().findAndRegisterModules();
@@ -41,18 +39,13 @@ public class JsonBenchmark {
     }
 
     @Benchmark
-    public void streaming(Blackhole blackhole) throws IOException
-    {
-        try (final JsonParser parser = jsonFactory.createParser(bankLoanData))
-        {
+    public void streaming(Blackhole blackhole) throws IOException {
+        try (final JsonParser parser = jsonFactory.createParser(bankLoanData)) {
             JsonToken token;
-            while ((token = parser.nextToken()) != null)
-            {
-                if (token.isScalarValue())
-                {
-                    final String currentName = parser.getCurrentName();
-                    if (currentName != null)
-                    {
+            while ((token = parser.nextToken()) != null) {
+                if (token.isScalarValue()) {
+                    final String currentName = parser.currentName();
+                    if (currentName != null) {
                         final String text = parser.getText();
 
                         blackhole.consume(text);
@@ -63,8 +56,7 @@ public class JsonBenchmark {
     }
 
     @Benchmark
-    public LoanApplication binding() throws IOException
-    {
+    public LoanApplication binding() throws IOException {
         return objectMapper.readValue(bankLoanData, LoanApplication.class);
     }
 
